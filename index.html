@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fff3f7">
+<title>今日音樂占卜 ✦ Mood Fortune</title>
+<style>
+:root{--pink:#f3b7ce;--pink-dark:#b85d86;--rose:#ffe1eb;--lav:#e9e2fb;--cream:#fffaf0;--ink:#554453;--muted:#8b7a88;--line:#f0dce5;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;background:radial-gradient(circle at 12% 10%,#fff 0 3%,transparent 22%),radial-gradient(circle at 90% 18%,#f8e6ff 0 2%,transparent 20%),linear-gradient(145deg,#fff6f8,#fff8ee 48%,#f8f3ff);overflow-x:hidden}
+button{font:inherit;cursor:pointer;border:0}
+button:focus-visible{outline:3px solid #c27fa0;outline-offset:3px}
+a{color:var(--pink-dark)}
+.page{width:min(980px,100%);margin:auto;padding:22px 18px 50px;position:relative}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;font-size:.83rem;color:var(--muted)}
+.brand{font-weight:800;letter-spacing:.08em;color:#9b6380}
+.brand span{color:#d69bb7}
+.pill{border:1px solid #f0d5e1;border-radius:999px;padding:7px 12px;background:#ffffffa8}
+.hero{text-align:center;padding:24px 10px 20px}
+.kicker{font-size:.78rem;letter-spacing:.22em;color:#b47d9b;font-weight:700}
+h1{font-size:clamp(2rem,6vw,3.8rem);line-height:1.15;margin:12px 0 12px;letter-spacing:.04em;color:#8e5c7c}
+.subtitle{color:var(--muted);line-height:1.9;margin:0 auto;max-width:560px}
+.decor{display:flex;justify-content:center;align-items:center;gap:18px;margin:24px auto 26px;color:#d99cba}
+.decor .orb{width:92px;height:92px;border-radius:32px;background:linear-gradient(145deg,#fff,#ffe0ec);box-shadow:0 10px 25px #dba3bd35;border:1px solid #fff;display:grid;place-items:center;font-size:2.7rem;transform:rotate(-5deg)}
+.decor .orb:nth-child(2){transform:rotate(5deg);background:linear-gradient(145deg,#fff,#eae3ff)}
+.spark{font-size:1.5rem;animation:twinkle 2.5s infinite ease-in-out}
+@keyframes twinkle{50%{transform:scale(1.18) rotate(10deg);opacity:.65}}
+.card{background:#ffffffc9;border:1px solid #fff;box-shadow:0 18px 45px #b98aa51c;border-radius:26px;padding:clamp(20px,4vw,34px);backdrop-filter:blur(8px)}
+.screen{display:none;animation:fadeUp .4s ease both}.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.primary{display:inline-flex;justify-content:center;align-items:center;gap:10px;padding:14px 25px;border-radius:999px;color:#fff;background:linear-gradient(120deg,#d88eae,#b98fce);font-weight:750;box-shadow:0 8px 20px #c789ac42;transition:.2s}
+.primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px #c789ac50}
+.secondary{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 18px;border:1px solid #ead2df;border-radius:999px;background:#fffafc;color:#98627e;font-weight:700;transition:.2s}
+.secondary:hover{background:#fff0f6}
+.home-actions{text-align:center;margin-top:26px}
+.smallnote{font-size:.8rem;color:var(--muted);line-height:1.7;margin-top:16px}
+.progress-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;color:var(--muted);font-size:.85rem}
+.progress{height:7px;border-radius:20px;background:#f5e6ee;overflow:hidden;margin-bottom:27px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,#efb4cd,#c3a4e8);transition:width .3s}
+.question-label{font-size:.76rem;letter-spacing:.16em;color:#bd7e9e;font-weight:800}
+h2{font-size:clamp(1.45rem,4vw,2.1rem);line-height:1.35;margin:9px 0 10px;color:#8e5c7c}
+.help{color:var(--muted);line-height:1.7;margin:0 0 23px}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.option{border:1px solid var(--line);border-radius:18px;background:#fffdfd;padding:16px;text-align:left;color:var(--ink);min-height:78px;transition:.18s;display:flex;gap:12px;align-items:center}
+.option:hover{border-color:#e6afc7;transform:translateY(-1px);background:#fff7fa}
+.option.selected{border:2px solid #cb88aa;background:#fff0f6;box-shadow:0 0 0 3px #f9e1ec}
+.option .emoji{font-size:1.6rem;flex-shrink:0}
+.option strong{display:block;font-size:.98rem;margin-bottom:3px}
+.option small{display:block;color:var(--muted);line-height:1.5}
+.question-nav{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+.question-nav .primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.envelope-stage{min-height:360px;display:grid;place-items:center;overflow:hidden;position:relative}
+.envelope-wrap{width:min(300px,80vw);height:210px;position:relative;perspective:900px;filter:drop-shadow(0 16px 15px #b987a52b)}
+.envelope-back{position:absolute;inset:0;background:#e7b8d0;border-radius:13px}
+.letter{position:absolute;width:86%;height:88%;left:7%;top:5%;background:#fffaf3;border-radius:8px;border:1px solid #f3dfd0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;transition:transform 1s cubic-bezier(.2,.75,.2,1);z-index:2}
+.letter .mini{font-size:2.3rem}
+.letter p{margin:8px 0 0;color:#a77a91;font-weight:700}
+.envelope-front{position:absolute;inset:0;z-index:3;background:#f2c9dc;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);border-radius:12px}
+.flap{position:absolute;inset:0 0 auto;height:58%;background:#e8b0ca;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;z-index:4;transition:transform .7s ease}
+.seal{position:absolute;z-index:5;left:50%;top:48%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:#c5799d;color:white;display:grid;place-items:center;font-size:1.3rem;box-shadow:0 4px 10px #a65d813d;transition:opacity .3s}
+.envelope-wrap.open .flap{transform:rotateX(180deg);z-index:1}
+.envelope-wrap.open .seal{opacity:0}
+.envelope-wrap.open .letter{transform:translateY(-115px) scale(1.02)}
+.float-heart{position:absolute;color:#d79ab8;font-size:1.5rem;animation:float 2.5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-15px) rotate(8deg)}}
+.result-layout{display:grid;grid-template-columns:minmax(220px,.85fr) minmax(0,1.15fr);gap:28px;align-items:center}
+.album{width:100%;aspect-ratio:1;max-width:340px;margin:auto;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 15px 30px #9d789d25;border:5px solid white;background:linear-gradient(140deg,#f8c8da,#dcd0fa 55%,#fff0cb);display:grid;place-items:center}
+.album::before{content:"";position:absolute;inset:12px;border:1px solid #ffffffa6;border-radius:12px}
+.album .art-emoji{font-size:clamp(4rem,12vw,7rem);filter:drop-shadow(0 5px 4px #8c668333);z-index:1}
+.album .art-title{position:absolute;bottom:22px;left:15px;right:15px;text-align:center;font-size:.72rem;letter-spacing:.15em;color:#77546f;font-weight:800;z-index:1}
+.album .art-star{position:absolute;font-size:1.3rem;color:#fff8;z-index:1}
+.album .art-star.s1{top:22px;left:24px}.album .art-star.s2{top:48px;right:24px}.album .art-star.s3{bottom:56px;right:28px}
+.song-eyebrow{font-size:.75rem;letter-spacing:.16em;color:#bd7e9e;font-weight:800}
+.song-title{font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.2;margin:10px 0 7px;overflow-wrap:anywhere}
+.artist{font-size:1.05rem;color:#8e7188;margin-bottom:13px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 17px}
+.tag{font-size:.76rem;border-radius:999px;padding:6px 10px;background:#f8eaf2;color:#9a6883}
+.reason{background:#fff8fb;border:1px solid #f3dce7;padding:16px;border-radius:16px;line-height:1.8;color:#7d6677;margin:17px 0}
+.result-actions{display:flex;flex-wrap:wrap;gap:9px}
+.result-actions button{font-size:.9rem}
+.subsection{margin-top:18px}
+.subsection h3{font-size:1rem;color:#956782;margin:0 0 7px}
+.muted{font-size:.83rem;color:var(--muted);line-height:1.7}
+.footer{text-align:center;font-size:.78rem;color:#a28e9d;margin-top:26px;line-height:1.8}
+.modal-backdrop{position:fixed;inset:0;background:#49364965;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
+.modal-backdrop.show{display:flex}
+.modal{width:min(520px,100%);max-height:85vh;overflow:auto;background:#fffafc;border-radius:24px;padding:26px;box-shadow:0 20px 70px #39253d40;position:relative}
+.modal-close{position:absolute;right:16px;top:13px;border-radius:50%;width:36px;height:36px;background:#f9e8f0;color:#956782;font-size:1.2rem}
+.modal h2{padding-right:38px}
+.artist-badge{width:72px;height:72px;border-radius:24px;background:linear-gradient(140deg,#f6c5d8,#e6dcfa);display:grid;place-items:center;font-size:2rem;margin-bottom:14px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#6c5268;color:white;border-radius:999px;padding:11px 18px;font-size:.88rem;transition:.25s;z-index:30;box-shadow:0 8px 20px #6c526833;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.hidden{display:none!important}
+@media(max-width:680px){.page{padding:14px 13px 34px}.hero{padding-top:18px}.decor .orb{width:74px;height:74px;border-radius:25px;font-size:2.1rem}.options{grid-template-columns:1fr}.option{min-height:66px;padding:13px}.result-layout{grid-template-columns:1fr;gap:22px}.album{max-width:280px}.envelope-stage{min-height:315px}.card{border-radius:22px}.result-actions button{flex:1 1 44%}.topline{font-size:.75rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topline">
+    <div class="brand">♡ MOOD <span>FORTUNE</span></div>
+    <div class="pill">✦ 今日的音樂小儀式</div>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">A LITTLE SONG FOR YOU</div>
+    <h1>今日音樂占卜</h1>
+    <p class="subtitle">有些歌，像是剛好在今天等著你。<br>回答三個小問題，拆開命運寄來的音樂信吧。</p>
+    <div class="decor" aria-hidden="true">
+      <span class="spark">✧</span><div class="orb">💌</div><div class="orb">🎧</div><span class="spark">✦</span>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="screen active card">
+      <div style="text-align:center">
+        <div style="font-size:2rem;margin-bottom:8px">🌷 ✉️ 🌷</div>
+        <h2>今天，想收到哪一首歌？</h2>
+        <p class="help" style="max-width:510px;margin:0 auto">讓心情決定方向，讓一點點隨機帶來驚喜。<br>最後只會抽出一首專屬於此刻的命定曲。</p>
+        <div class="home-actions"><button id="startBtn" class="primary">開始占卜 <span>♡</span></button></div>
+        <p class="smallnote">不用登入・不保存紀錄・一次只抽一首</p>
+      </div>
+    </section>
+
+    <section id="quiz" class="screen card">
+      <div class="progress-head"><span id="stepLabel">第 1 題／共 3 題</span><span id="stepType">TODAY'S MOOD</span></div>
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="question-label" id="questionLabel">QUESTION 01</div>
+      <h2 id="questionTitle"></h2>
+      <p class="help" id="questionHelp"></p>
+      <div class="options" id="options"></div>
+      <div class="question-nav">
+        <button id="backBtn" class="secondary">← 上一題</button>
+        <button id="nextBtn" class="primary" disabled>下一題 →</button>
+      </div>
+    </section>
+
+    <section id="reveal" class="screen card">
+      <div style="text-align:center">
+        <div class="question-label">A LETTER FROM FATE</div>
+        <h2 id="revealTitle">你的命定曲，正在送達</h2>
+        <p class="help">深呼吸一下，打開今天的小小驚喜。</p>
+      </div>
+      <div class="envelope-stage">
+        <span class="float-heart" style="top:16%;left:15%">♡</span>
+        <span class="float-heart" style="top:25%;right:14%;animation-delay:.7s">✦</span>
+        <span class="float-heart" style="bottom:13%;left:24%;animation-delay:1.2s">✧</span>
+        <div id="envelope" class="envelope-wrap" aria-label="正在拆開的粉色信封">
+          <div class="envelope-back"></div>
+          <div class="letter"><div class="mini">🎵</div><p>今天的音樂小禮物</p><small style="margin-top:6px;color:#b69aab">A SONG JUST FOR YOU</small></div>
+          <div class="envelope-front"></div><div class="flap"></div><div class="seal">♡</div>
+        </div>
+      </div>
+      <div style="text-align:center"><p id="revealMessage" class="help">正在為你尋找今天的那首歌……</p></div>
+    </section>
+
+    <section id="result" class="screen card">
+      <div class="result-layout">
+        <div>
+          <div id="albumArt" class="album" role="img" aria-label="歌曲專輯封面示意">
+            <span class="art-star s1">✦</span><span class="art-star s2">♡</span><span class="art-star s3">✧</span>
+            <div class="art-emoji" id="artEmoji">🌙</div><div class="art-title" id="artTitle">A SONG FOR TODAY</div>
+          </div>
+          <p class="muted" style="text-align:center;margin-top:10px">今日命定曲 · 封面插畫</p>
+        </div>
+        <div>
+          <div class="song-eyebrow">✦ YOUR SONG OF THE DAY</div>
+          <h2 class="song-title" id="songTitle">歌曲名稱</h2>
+          <div class="artist" id="songArtist">歌手名稱</div>
+          <div class="tags" id="songTags"></div>
+          <div class="reason"><strong>💌 為什麼今天推薦這首歌？</strong><div id="reasonText" style="margin-top:7px"></div></div>
+          <div class="result-actions">
+            <button id="playBtn" class="primary">▶ PLAY／聆聽</button>
+            <button id="artistBtn" class="secondary">♡ 認識歌手</button>
+            <button id="shareBtn" class="secondary">↗ 分享今日歌曲</button>
+            <button id="rerollBtn" class="secondary">✉ 再占卜一次</button>
+          </div>
+          <div class="subsection">
+            <h3>找找這首歌</h3>
+            <p class="muted">如果原始影片無法播放，可以搜尋其他可用版本。</p>
+            <div class="result-actions"><button id="searchSongBtn" class="secondary">⌕ 搜尋歌曲</button><button id="searchArtistBtn" class="secondary">⌕ 搜尋歌手</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="footer">用一點心情、一點隨機，遇見今天的歌。<br>Made with ♡ · Mood Fortune</div>
+</div>
+
+<div id="artistModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <button id="closeModal" class="modal-close" aria-label="關閉">×</button>
+    <div class="artist-badge">🎙️</div>
+    <div class="question-label">MEET THE ARTIST</div>
+    <h2 id="modalTitle">認識歌手</h2>
+    <p id="artistBio" style="line-height:1.9"></p>
+    <h3 style="color:#956782">代表作品／延伸聆聽</h3>
+    <p id="artistWorks" style="line-height:1.8"></p>
+    <p class="muted">此為簡短介紹。若想確認最新資訊，可透過下方連結搜尋。</p>
+    <button id="modalSearchArtist" class="primary">在 YouTube 搜尋歌手 ↗</button>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+const songs = [
+/* 中文 16 */
+{title:"刻在我心底的名字",artist:"盧廣仲",lang:"中文",moods:["感傷","感性","內省","希望"],genres:["抒情","流行"],tags:["感性","溫柔"],emoji:"🌙",colors:["#f5c6d9","#c9c7f3"],bio:"盧廣仲是台灣創作歌手，以辨識度鮮明的嗓音、真誠的創作與生活感十足的作品受到聽眾喜愛。",works:"魚仔、幾分之幾、刻在我心底的名字"},
+{title:"魚仔",artist:"盧廣仲",lang:"中文",moods:["平靜","感傷","療癒","內省"],genres:["民謠","抒情"],tags:["療癒","安靜"],emoji:"🐟",colors:["#bce4e8","#f4d7e6"],bio:"盧廣仲是台灣創作歌手，作品常以簡單而細膩的旋律描寫日常、感情與人生片刻。",works:"刻在我心底的名字、幾分之幾、魚仔"},
+{title:"如果可以",artist:"韋禮安",lang:"中文",moods:["希望","感性","感傷","浪漫"],genres:["流行","抒情"],tags:["浪漫","感性"],emoji:"🌸",colors:["#f4c7d9","#e5d9fb"],bio:"韋禮安是台灣創作歌手，以旋律性強的流行歌曲與細膩的情感表達著稱。",works:"如果可以、慢慢等、還是會"},
+{title:"想見你想見你想見你",artist:"八三夭",lang:"中文",moods:["激昂","希望","浪漫","開心"],genres:["搖滾","流行"],tags:["熱血","想念"],emoji:"💫",colors:["#f5c4d8","#b9dff1"],bio:"八三夭是台灣樂團，以充滿能量的流行搖滾和容易引起共鳴的歌詞受到歡迎。",works:"想見你想見你想見你、致青春、東區東區"},
+{title:"好不容易",artist:"告五人",lang:"中文",moods:["感傷","希望","內省","療癒"],genres:["獨立流行","抒情"],tags:["療癒","想念"],emoji:"🌧️",colors:["#b8d4e8","#e8c9e4"],bio:"告五人是台灣樂團，以主唱雙聲線、夢幻編曲與描寫愛情和生活的歌曲受到喜愛。",works:"披星戴月的想你、愛人錯過、好不容易"},
+{title:"披星戴月的想你",artist:"告五人",lang:"中文",moods:["浪漫","感傷","希望","內省"],genres:["獨立流行","搖滾"],tags:["想念","浪漫"],emoji:"🌠",colors:["#c9c7f3","#f2c8dc"],bio:"告五人是台灣樂團，作品常融合獨立流行、搖滾與帶有畫面感的情緒敘事。",works:"愛人錯過、好不容易、披星戴月的想你"},
+{title:"愛人錯過",artist:"告五人",lang:"中文",moods:["開心","浪漫","激昂","希望"],genres:["獨立流行","搖滾"],tags:["輕快","心動"],emoji:"💘",colors:["#f8c8d8","#f8dfb8"],bio:"告五人是台灣樂團，以清新又帶點迷幻感的音樂風格，以及容易跟唱的旋律聞名。",works:"披星戴月的想你、好不容易、愛人錯過"},
+{title:"帶我去找夜生活",artist:"告五人",lang:"中文",moods:["開心","激昂","放鬆"],genres:["獨立流行","搖滾"],tags:["夜晚","自由"],emoji:"🌃",colors:["#c6c5ef","#f5c8dc"],bio:"告五人是台灣樂團，擅長以獨立流行的聲響描繪年輕人的日常與情感。",works:"愛人錯過、披星戴月的想你、好不容易"},
+{title:"年少有為",artist:"李榮浩",lang:"中文",moods:["感傷","內省","希望"],genres:["流行","抒情"],tags:["成長","感性"],emoji:"📖",colors:["#e8c7d7","#c7d8ec"],bio:"李榮浩是華語創作歌手、音樂製作人，作品常以簡潔編曲與細節豐富的敘事呈現情感。",works:"年少有為、模特、李白"},
+{title:"小幸運",artist:"田馥甄",lang:"中文",moods:["浪漫","感傷","希望","療癒"],genres:["流行","抒情"],tags:["青春","溫柔"],emoji:"🍀",colors:["#d1e8d4","#f3cde0"],bio:"田馥甄是台灣歌手，曾為女子團體 S.H.E. 成員，個人作品展現細膩且多變的聲音表情。",works:"小幸運、你就不要想起我、無人知曉"},
+{title:"你就不要想起我",artist:"田馥甄",lang:"中文",moods:["感傷","內省","宣洩"],genres:["流行","抒情"],tags:["釋放","感性"],emoji:"💔",colors:["#d2d4ee","#efbfd2"],bio:"田馥甄是台灣歌手，以清澈而有層次的演唱風格，以及情感張力鮮明的作品受到肯定。",works:"小幸運、無人知曉、你就不要想起我"},
+{title:"裹著心的光",artist:"林俊傑",lang:"中文",moods:["希望","療癒","平靜"],genres:["流行","抒情"],tags:["希望","陪伴"],emoji:"☀️",colors:["#f6d8b9","#f2bfd4"],bio:"林俊傑是新加坡華語創作歌手，以旋律創作、唱功與多元的流行音樂製作受到廣泛關注。",works:"修煉愛情、江南、裹著心的光"},
+{title:"修煉愛情",artist:"林俊傑",lang:"中文",moods:["感傷","感性","內省"],genres:["流行","抒情"],tags:["回憶","深情"],emoji:"🕊️",colors:["#d3d9ed","#f1cbd9"],bio:"林俊傑是新加坡華語創作歌手，作品涵蓋流行、抒情與不同電子音樂元素。",works:"江南、她說、修煉愛情"},
+{title:"日不落",artist:"蔡依林",lang:"中文",moods:["開心","希望","放鬆"],genres:["流行","舞曲"],tags:["明亮","活力"],emoji:"🌞",colors:["#f7d49d","#f4bcd4"],bio:"蔡依林是華語流行歌手，以多變的音樂風格、舞台表演與流行作品聞名。",works:"日不落、玫瑰少年、倒帶"},
+{title:"玫瑰少年",artist:"蔡依林",lang:"中文",moods:["希望","激昂","療癒"],genres:["流行","舞曲"],tags:["勇氣","做自己"],emoji:"🌹",colors:["#f2b8ce","#d8c5ef"],bio:"蔡依林是華語流行歌手，作品涉及流行舞曲與多元議題，也以鮮明的舞台美學受到關注。",works:"日不落、倒帶、玫瑰少年"},
+{title:"普通朋友",artist:"陶喆",lang:"中文",moods:["浪漫","感傷","平靜"],genres:["R&B","流行"],tags:["曖昧","慵懶"],emoji:"☕",colors:["#dfc6b9","#f4d8e3"],bio:"陶喆是華語創作歌手與製作人，常被視為華語 R&B 發展的重要代表之一。",works:"普通朋友、愛很簡單、找自己"},
+/* 韓文 16 */
+{title:"Love Lee",artist:"AKMU",lang:"韓文",moods:["開心","浪漫","放鬆"],genres:["流行","輕快"],tags:["可愛","心動"],emoji:"🍒",colors:["#f8c6d8","#f5e0a9"],bio:"AKMU 是韓國兄妹音樂組合，由李燦赫與李秀賢組成，以創作能力與清新獨特的音樂風格聞名。",works:"Love Lee、How can I love the heartbreak、200%"},
+{title:"How can I love the heartbreak, you're the one I love",artist:"AKMU",lang:"韓文",moods:["感傷","內省","感性"],genres:["抒情","民謠流行"],tags:["細膩","感性"],emoji:"🌧️",colors:["#c6dce8","#e9cce1"],bio:"AKMU 是韓國兄妹組合，歌曲以細膩敘事、和聲與獨特旋律受到喜愛。",works:"Love Lee、200%、Dinosaur"},
+{title:"Dynamite",artist:"BTS",lang:"韓文",moods:["開心","激昂","希望"],genres:["迪斯可流行","舞曲"],tags:["活力","明亮"],emoji:"🪩",colors:["#f8d4a0","#f2c0d8"],bio:"BTS 是韓國男子團體，以流行音樂、舞台表演及跨越語言的全球影響力聞名。",works:"Dynamite、Spring Day、Butter"},
+{title:"Spring Day",artist:"BTS",lang:"韓文",moods:["感傷","希望","療癒","內省"],genres:["流行","抒情"],tags:["思念","溫柔"],emoji:"🌷",colors:["#c6dce8","#f4d4e2"],bio:"BTS 是韓國男子團體，音樂涵蓋多種流行曲風，部分作品探討成長、友情與社會情感。",works:"Spring Day、Dynamite、The Truth Untold"},
+{title:"Love Dive",artist:"IVE",lang:"韓文",moods:["激昂","浪漫","自信"],genres:["流行","舞曲"],tags:["自信","魅力"],emoji:"🪞",colors:["#d4c5f1","#f2bfd4"],bio:"IVE 是韓國女子團體，以鮮明的流行舞曲、時尚概念與自信主題受到關注。",works:"LOVE DIVE、After LIKE、I AM"},
+{title:"I AM",artist:"IVE",lang:"韓文",moods:["希望","激昂","自信"],genres:["流行","舞曲"],tags:["勇氣","自信"],emoji:"🦋",colors:["#d7c7f2","#f6d1de"],bio:"IVE 是韓國女子團體，歌曲常結合流行舞曲與自我肯定的主題。",works:"I AM、LOVE DIVE、After LIKE"},
+{title:"Ditto",artist:"NewJeans",lang:"韓文",moods:["感傷","平靜","內省"],genres:["R&B","流行"],tags:["懷舊","朦朧"],emoji:"📼",colors:["#c7dce9","#d9d2f3"],bio:"NewJeans 是韓國女子團體，以帶有復古元素的流行與 R&B 聲響受到矚目。",works:"Ditto、Hype Boy、Super Shy"},
+{title:"Hype Boy",artist:"NewJeans",lang:"韓文",moods:["開心","浪漫","放鬆"],genres:["流行","舞曲"],tags:["輕快","青春"],emoji:"🎀",colors:["#f5c6da","#cce6ed"],bio:"NewJeans 是韓國女子團體，作品常融合流行、R&B 與復古聲響。",works:"Hype Boy、Ditto、Super Shy"},
+{title:"Super Shy",artist:"NewJeans",lang:"韓文",moods:["開心","浪漫","放鬆"],genres:["流行","舞曲"],tags:["可愛","輕快"],emoji:"🍓",colors:["#f8c6d9","#f9e6af"],bio:"NewJeans 是韓國女子團體，以清爽的音樂製作與自然青春的視覺風格受到歡迎。",works:"Super Shy、Ditto、Hype Boy"},
+{title:"Feel My Rhythm",artist:"Red Velvet",lang:"韓文",moods:["希望","浪漫","平靜"],genres:["流行","舞曲"],tags:["夢幻","古典感"],emoji:"🩰",colors:["#d8c8f3","#f4c8da"],bio:"Red Velvet 是韓國女子團體，以多樣的音樂概念與兼具實驗性及流行性的作品聞名。",works:"Psycho、Red Flavor、Feel My Rhythm"},
+{title:"Psycho",artist:"Red Velvet",lang:"韓文",moods:["感傷","浪漫","內省"],genres:["流行","R&B"],tags:["神祕","情緒張力"],emoji:"🖤",colors:["#d9c6e9","#e9b9cf"],bio:"Red Velvet 是韓國女子團體，音樂風格涵蓋明亮流行與較成熟、神祕的聲響。",works:"Psycho、Feel My Rhythm、Bad Boy"},
+{title:"Eight",artist:"IU",lang:"韓文",moods:["感傷","希望","療癒"],genres:["流行","抒情"],tags:["回憶","溫柔"],emoji:"🌅",colors:["#f4d2b0","#eac9dc"],bio:"IU 是韓國創作歌手與演員，以細膩的演唱、創作與多樣化音樂作品受到肯定。",works:"Eight、Through the Night、Love wins all"},
+{title:"Through the Night",artist:"IU",lang:"韓文",moods:["平靜","感傷","療癒","內省"],genres:["民謠","抒情"],tags:["安靜","陪伴"],emoji:"🌙",colors:["#c9cdec","#e6d7ec"],bio:"IU 是韓國創作歌手與演員，擅長以溫柔的聲線詮釋細膩情緒。",works:"Through the Night、Eight、Love wins all"},
+{title:"Love wins all",artist:"IU",lang:"韓文",moods:["感傷","希望","浪漫"],genres:["抒情","流行"],tags:["深情","希望"],emoji:"🕊️",colors:["#d1d7ef","#efc8dc"],bio:"IU 是韓國創作歌手與演員，作品常以故事性與情感表達打動聽眾。",works:"Love wins all、Eight、Through the Night"},
+{title:"ANTIFRAGILE",artist:"LE SSERAFIM",lang:"韓文",moods:["激昂","自信","希望"],genres:["流行","舞曲"],tags:["力量","自信"],emoji:"🔥",colors:["#f4c4b8","#d6c6ed"],bio:"LE SSERAFIM 是韓國女子團體，作品常呈現堅定、自信與突破限制的主題。",works:"ANTIFRAGILE、Perfect Night、EASY"},
+{title:"Perfect Night",artist:"LE SSERAFIM",lang:"韓文",moods:["開心","放鬆","浪漫"],genres:["流行","舞曲"],tags:["友情","輕快"],emoji:"🌌",colors:["#d2c9ef","#f4d1e0"],bio:"LE SSERAFIM 是韓國女子團體，以流行舞曲及自信、自由的音樂概念受到關注。",works:"Perfect Night、ANTIFRAGILE、EASY"},
+/* English 16 */
+{title:"A Sky Full of Stars",artist:"Coldplay",lang:"英文",moods:["希望","激昂","浪漫","開心"],genres:["流行搖滾","電子流行"],tags:["明亮","振奮"],emoji:"✨",colors:["#c8d5f7","#f6c6db"],bio:"Coldplay 是英國樂團，音樂融合流行搖滾、氛圍音樂與電子元素，以大型現場演出聞名。",works:"Yellow、Viva la Vida、A Sky Full of Stars"},
+{title:"Yellow",artist:"Coldplay",lang:"英文",moods:["浪漫","感傷","希望"],genres:["另類搖滾","抒情"],tags:["溫柔","真誠"],emoji:"💛",colors:["#f8e3a7","#f2c6dc"],bio:"Coldplay 是英國樂團，作品常以旋律鮮明的搖滾編曲與情感表達吸引聽眾。",works:"Yellow、Fix You、The Scientist"},
+{title:"Viva la Vida",artist:"Coldplay",lang:"英文",moods:["希望","激昂","內省"],genres:["流行搖滾","藝術流行"],tags:["壯闊","重新出發"],emoji:"👑",colors:["#f0d5a7","#d4c6f0"],bio:"Coldplay 是英國樂團，作品融合搖滾、管弦與電子音樂元素。",works:"Viva la Vida、Yellow、Paradise"},
+{title:"Fix You",artist:"Coldplay",lang:"英文",moods:["感傷","療癒","希望"],genres:["搖滾","抒情"],tags:["陪伴","療癒"],emoji:"🕯️",colors:["#c8d9f0","#e8c7e5"],bio:"Coldplay 是英國樂團，以旋律與層次漸進的編曲營造情緒張力。",works:"Fix You、The Scientist、Yellow"},
+{title:"Shake It Off",artist:"Taylor Swift",lang:"英文",moods:["開心","激昂","自信"],genres:["流行","舞曲"],tags:["活力","做自己"],emoji:"💃",colors:["#f4c8d9","#f4dfa7"],bio:"Taylor Swift 是美國創作歌手，作品從鄉村流行拓展至多種流行音樂風格，擅長敘事型創作。",works:"Shake It Off、Cruel Summer、Anti-Hero"},
+{title:"Cruel Summer",artist:"Taylor Swift",lang:"英文",moods:["激昂","浪漫","開心"],genres:["流行","合成器流行"],tags:["心動","夏日"],emoji:"🍒",colors:["#f6c4d5","#f6d8a5"],bio:"Taylor Swift 是美國創作歌手，以個人化敘事與不斷變化的流行音樂風格受到關注。",works:"Cruel Summer、Lover、Anti-Hero"},
+{title:"Anti-Hero",artist:"Taylor Swift",lang:"英文",moods:["內省","感傷","希望"],genres:["流行","合成器流行"],tags:["自我理解","坦率"],emoji:"🪞",colors:["#d7c8f0","#f0c8dc"],bio:"Taylor Swift 是美國創作歌手，作品常以自我觀察、成長與關係作為創作主題。",works:"Anti-Hero、Cruel Summer、Cardigan"},
+{title:"Lover",artist:"Taylor Swift",lang:"英文",moods:["浪漫","平靜","希望"],genres:["流行","抒情"],tags:["溫柔","浪漫"],emoji:"💌",colors:["#f6c8dc","#d8c9f3"],bio:"Taylor Swift 是美國創作歌手，擅長透過細節描寫呈現感情與個人成長。",works:"Lover、Daylight、Cruel Summer"},
+{title:"good 4 u",artist:"Olivia Rodrigo",lang:"英文",moods:["激昂","宣洩","感傷"],genres:["流行搖滾","流行龐克"],tags:["宣洩","能量"],emoji:"⚡",colors:["#d4c7ef","#f4c1d3"],bio:"Olivia Rodrigo 是美國創作歌手，以結合流行、搖滾與青春情緒的歌曲受到關注。",works:"good 4 u、drivers license、vampire"},
+{title:"drivers license",artist:"Olivia Rodrigo",lang:"英文",moods:["感傷","內省","感性"],genres:["流行","抒情"],tags:["失落","回憶"],emoji:"🚗",colors:["#c9d8ef","#e9c8df"],bio:"Olivia Rodrigo 是美國創作歌手，作品以直接的敘事與強烈的青春情緒著稱。",works:"drivers license、good 4 u、deja vu"},
+{title:"vampire",artist:"Olivia Rodrigo",lang:"英文",moods:["宣洩","激昂","感傷"],genres:["流行","搖滾"],tags:["情緒張力","釋放"],emoji:"🦇",colors:["#d7c4ec","#eabbd0"],bio:"Olivia Rodrigo 是美國創作歌手，音樂常融合流行抒情與搖滾元素。",works:"vampire、drivers license、good 4 u"},
+{title:"Golden Hour",artist:"JVKE",lang:"英文",moods:["浪漫","希望","平靜"],genres:["流行","抒情"],tags:["夢幻","心動"],emoji:"🌇",colors:["#f8d6a5","#f2c4da"],bio:"JVKE 是美國創作歌手與製作人，以流行旋律及融合鋼琴、電子元素的作品受到關注。",works:"golden hour、this is what falling in love feels like"},
+{title:"Until I Found You",artist:"Stephen Sanchez",lang:"英文",moods:["浪漫","感傷","平靜"],genres:["復古流行","抒情"],tags:["復古","深情"],emoji:"🌹",colors:["#f3d4bd","#e9c8db"],bio:"Stephen Sanchez 是美國創作歌手，音樂常帶有復古流行與老派浪漫的色彩。",works:"Until I Found You、Evangeline"},
+{title:"Levitating",artist:"Dua Lipa",lang:"英文",moods:["開心","激昂","放鬆"],genres:["迪斯可流行","舞曲"],tags:["舞動","活力"],emoji:"🪩",colors:["#d7c7f1","#f6d39d"],bio:"Dua Lipa 是英國流行歌手，以節奏鮮明的流行舞曲與復古迪斯可元素聞名。",works:"Levitating、Don't Start Now、Houdini"},
+{title:"Don't Start Now",artist:"Dua Lipa",lang:"英文",moods:["自信","激昂","開心"],genres:["迪斯可流行","舞曲"],tags:["自信","節奏感"],emoji:"💫",colors:["#f5c8dc","#c9d9f2"],bio:"Dua Lipa 是英國流行歌手，音樂融合現代流行、舞曲與復古迪斯可聲響。",works:"Don't Start Now、Levitating、New Rules"},
+{title:"Here Comes the Sun",artist:"The Beatles",lang:"英文",moods:["希望","療癒","平靜","開心"],genres:["搖滾","民謠搖滾"],tags:["陽光","重新開始"],emoji:"🌻",colors:["#f6e2a4","#d3e8ce"],bio:"The Beatles 是英國搖滾樂團，對流行音樂與錄音製作發展具有深遠影響。",works:"Here Comes the Sun、Let It Be、Hey Jude"},
+/* 日文 16 */
+{title:"Lemon",artist:"米津玄師",lang:"日文",moods:["感傷","內省","感性"],genres:["J-pop","抒情"],tags:["回憶","細膩"],emoji:"🍋",colors:["#f4e5a6","#f1c9db"],bio:"米津玄師是日本創作歌手與音樂製作人，以獨特的旋律、編曲及視覺創作受到廣泛關注。",works:"Lemon、KICK BACK、感電"},
+{title:"KICK BACK",artist:"米津玄師",lang:"日文",moods:["激昂","宣洩","自信"],genres:["搖滾","J-pop"],tags:["爆發力","熱血"],emoji:"⚡",colors:["#e7c4f1","#f4c6bd"],bio:"米津玄師是日本創作歌手與音樂製作人，作品風格跨越流行、搖滾與電子音樂。",works:"KICK BACK、Lemon、地球儀"},
+{title:"地球儀",artist:"米津玄師",lang:"日文",moods:["平靜","希望","內省"],genres:["J-pop","抒情"],tags:["旅程","沉靜"],emoji:"🌍",colors:["#c7dce9","#d8c9f0"],bio:"米津玄師是日本創作歌手，以多元的音樂風格與富有個人特色的作品聞名。",works:"地球儀、Lemon、KICK BACK"},
+{title:"夜に駆ける",artist:"YOASOBI",lang:"日文",moods:["激昂","感傷","希望"],genres:["J-pop","電子流行"],tags:["疾走感","情緒張力"],emoji:"🌃",colors:["#c8c9f2","#f3c7dc"],bio:"YOASOBI 是日本音樂組合，以將小說故事轉化為歌曲的創作概念受到矚目。",works:"夜に駆ける、群青、アイドル"},
+{title:"群青",artist:"YOASOBI",lang:"日文",moods:["希望","激昂","自信"],genres:["J-pop","流行"],tags:["勇氣","追夢"],emoji:"🦋",colors:["#b8d8f3","#e8d2f3"],bio:"YOASOBI 是日本音樂組合，作品常以故事為起點，結合鮮明旋律與電子流行編曲。",works:"群青、夜に駆ける、アイドル"},
+{title:"アイドル",artist:"YOASOBI",lang:"日文",moods:["激昂","開心","自信"],genres:["J-pop","電子流行"],tags:["舞台感","能量"],emoji:"🎤",colors:["#f4bfd9","#d5c7f2"],bio:"YOASOBI 是日本音樂組合，以高辨識度旋律及故事導向的歌曲創作聞名。",works:"アイドル、群青、夜に駆ける"},
+{title:"怪獣の花唄",artist:"Vaundy",lang:"日文",moods:["激昂","希望","開心"],genres:["J-pop","搖滾"],tags:["青春","熱血"],emoji:"🎸",colors:["#f5c7d8","#c7d8f1"],bio:"Vaundy 是日本創作歌手與音樂製作人，作品融合流行、搖滾、R&B 等多元元素。",works:"怪獣の花唄、踊り子、不可幸力"},
+{title:"踊り子",artist:"Vaundy",lang:"日文",moods:["平靜","浪漫","放鬆"],genres:["J-pop","獨立流行"],tags:["慵懶","朦朧"],emoji:"🩰",colors:["#e2d0f0","#f3d1de"],bio:"Vaundy 是日本創作歌手，擅長在流行旋律中融合不同音樂風格與氛圍。",works:"踊り子、怪獣の花唄、不可幸力"},
+{title:"Pretender",artist:"Official髭男dism",lang:"日文",moods:["感傷","浪漫","內省"],genres:["J-pop","抒情搖滾"],tags:["錯過","深情"],emoji:"💔",colors:["#d0d9f1","#efc6dc"],bio:"Official髭男dism 是日本流行樂團，以富有旋律性的編曲與主唱的高辨識度聲線受到歡迎。",works:"Pretender、Subtitle、宿命"},
+{title:"Subtitle",artist:"Official髭男dism",lang:"日文",moods:["感傷","希望","感性"],genres:["J-pop","抒情"],tags:["溫柔","情感"],emoji:"❄️",colors:["#c9e0ef","#ead0ec"],bio:"Official髭男dism 是日本樂團，作品涵蓋流行、搖滾與細膩的抒情歌曲。",works:"Subtitle、Pretender、宿命"},
+{title:"マリーゴールド",artist:"あいみょん",lang:"日文",moods:["浪漫","平靜","感傷"],genres:["J-pop","民謠流行"],tags:["夏日","回憶"],emoji:"🌼",colors:["#f6d9a4","#f0c9dc"],bio:"あいみょん（Aimyon）是日本創作歌手，以民謠流行風格與直接細膩的歌詞受到喜愛。",works:"マリーゴールド、裸の心、君はロックを聴かない"},
+{title:"裸の心",artist:"あいみょん",lang:"日文",moods:["感傷","浪漫","希望"],genres:["J-pop","抒情"],tags:["真誠","溫柔"],emoji:"🌷",colors:["#f1c9dc","#d4d8f0"],bio:"あいみょん是日本創作歌手，作品常以日常語言描寫關係、孤獨與成長。",works:"裸の心、マリーゴールド、君はロックを聴かない"},
+{title:"打上花火",artist:"DAOKO × 米津玄師",lang:"日文",moods:["感傷","希望","浪漫"],genres:["J-pop","電子流行"],tags:["夏夜","回憶"],emoji:"🎆",colors:["#c8d9f4","#f0c7dc"],bio:"DAOKO 是日本歌手，與米津玄師合作的〈打上花火〉因電影主題曲而廣為人知。",works:"打上花火、米津玄師的 Lemon、DAOKO 的作品"},
+{title:"世界は恋に落ちている",artist:"CHiCO with HoneyWorks",lang:"日文",moods:["浪漫","開心","希望"],genres:["J-pop","青春流行"],tags:["青春","心動"],emoji:"💌",colors:["#f6c8dc","#d7c9f2"],bio:"CHiCO with HoneyWorks 是與創作團隊 HoneyWorks 合作的日本音樂企劃，以青春與戀愛題材歌曲受到動漫樂迷喜愛。",works:"世界は恋に落ちている、プライド革命"},
+{title:"ただ君に晴れ",artist:"ヨルシカ",lang:"日文",moods:["感傷","希望","平靜"],genres:["J-pop","搖滾"],tags:["夏日","青春"],emoji:"☁️",colors:["#c7e0ef","#f2d5e4"],bio:"ヨルシカ（Yorushika）是日本音樂組合，以文學感歌詞、吉他編曲與鮮明的情緒氛圍受到關注。",works:"ただ君に晴れ、だから僕は音楽を辞めた、花に亡霊"},
+{title:"花に亡霊",artist:"ヨルシカ",lang:"日文",moods:["感傷","平靜","內省","希望"],genres:["J-pop","搖滾"],tags:["回憶","透明感"],emoji:"🌸",colors:["#d2d9f2","#f1c9df"],bio:"ヨルシカ是日本音樂組合，作品常以文學意象、記憶與青春情緒構築歌曲世界。",works:"花に亡霊、ただ君に晴れ、だから僕は音楽を辞めた"}
+];
+
+const moods = [
+ {label:"晴朗放晴",emoji:"☀️",desc:"想要明亮、輕快一點",tags:["開心","輕快","明亮","希望","活力"]},
+ {label:"陰天漫遊",emoji:"☁️",desc:"平靜地待在自己的世界",tags:["平靜","慵懶","放鬆","安靜","內省"]},
+ {label:"下雨了",emoji:"🌧️",desc:"有一點感性，想聽懂自己的心",tags:["感傷","感性","內省","療癒","回憶"]},
+ {label:"雷雨交加",emoji:"⚡",desc:"需要宣洩，或讓能量跑出來",tags:["激昂","宣洩","熱血","自信","爆發力"]},
+ {label:"雨後彩虹",emoji:"🌈",desc:"想重新出發，找回一點希望",tags:["希望","療癒","勇氣","重新出發","追夢"]},
+ {label:"深夜星空",emoji:"🌙",desc:"想沉浸在安靜又細膩的情緒裡",tags:["安靜","內省","感性","慵懶","朦朧"]}
+];
+const languages = [
+ {label:"中文",emoji:"🧋",desc:"熟悉的字句，唱進心裡"},
+ {label:"韓文",emoji:"🎀",desc:"今天讓韓文旋律陪你"},
+ {label:"英文",emoji:"🌷",desc:"跟著旋律感受每個瞬間"},
+ {label:"日文",emoji:"🌸",desc:"讓日文歌帶你去另一個世界"}
+];
+const funQuestions = [
+ {q:"如果今天可以瞬間移動，你最想去哪裡？",answers:[
+  {label:"海邊吹風",emoji:"🌊",tags:["平靜","療癒","夏日","放鬆"]},{label:"熱鬧的城市",emoji:"🌃",tags:["激昂","活力","舞動","夜晚"]},{label:"某個人的身邊",emoji:"💌",tags:["浪漫","想念","深情","感性"]},{label:"沒有人的秘密基地",emoji:"🌿",tags:["安靜","內省","慵懶","朦朧"]}]},
+ {q:"你現在最需要收到哪一份小禮物？",answers:[
+  {label:"一個溫暖的擁抱",emoji:"🧸",tags:["療癒","陪伴","溫柔","希望"]},{label:"一張冒險地圖",emoji:"🗺️",tags:["激昂","熱血","追夢","勇氣"]},{label:"一封真心的信",emoji:"💌",tags:["感性","浪漫","深情","回憶"]},{label:"一整天的自由",emoji:"🪽",tags:["放鬆","自信","自由","開心"]}]},
+ {q:"如果今天是一部電影，你想當哪種主角？",answers:[
+  {label:"勇敢追夢的人",emoji:"🌟",tags:["希望","勇氣","追夢","激昂"]},{label:"浪漫故事的主角",emoji:"🌹",tags:["浪漫","心動","深情","感性"]},{label:"安靜觀察世界的人",emoji:"📖",tags:["平靜","內省","安靜","懷舊"]},{label:"把煩惱甩在身後的人",emoji:"🎉",tags:["開心","宣洩","自信","活力"]}]},
+ {q:"現在的你比較想要哪種超能力？",answers:[
+  {label:"讓時間暫停",emoji:"⏳",tags:["平靜","慵懶","安靜","內省"]},{label:"瞬間充滿勇氣",emoji:"🔥",tags:["激昂","自信","勇氣","熱血"]},{label:"讀懂某個人的心",emoji:"💗",tags:["浪漫","感性","深情","想念"]},{label:"把壞心情變成星星",emoji:"✨",tags:["療癒","希望","重新出發","開心"]}]},
+ {q:"今晚的天空會送你一個願望，你選哪個？",answers:[
+  {label:"好好睡一覺",emoji:"🌙",tags:["平靜","療癒","安靜","放鬆"]},{label:"一場意想不到的相遇",emoji:"💫",tags:["浪漫","心動","希望","開心"]},{label:"重新開始的勇氣",emoji:"🌈",tags:["希望","勇氣","自信","重新出發"]},{label:"盡情大聲唱歌",emoji:"🎤",tags:["激昂","宣洩","熱血","活力"]}]}
+];
+
+const state={step:0,answers:[null,null,null],funIndex:0,currentSong:null};
+const $=id=>document.getElementById(id);
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));window.scrollTo({top:0,behavior:"smooth"});}
+function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),2600);}
+function startQuiz(){state.step=0;state.answers=[null,null,null];state.funIndex=Math.floor(Math.random()*funQuestions.length);renderQuestion();showScreen("quiz");}
+function currentQuestion(){
+ if(state.step===0)return {label:"QUESTION 01",type:"TODAY'S MOOD",title:"如果今天的心情是一種天氣，會是什麼？",help:"不用想太多，選一個最接近現在的你。",options:moods.map((x,i)=>({...x,value:i}))};
+ if(state.step===1)return {label:"QUESTION 02",type:"YOUR LANGUAGE",title:"今天想聽哪一種語言的歌？",help:"選一種今天最想聽見的語言。",options:languages.map((x,i)=>({...x,value:i}))};
+ const f=funQuestions[state.funIndex];
+ return {label:"QUESTION 03",type:"A LITTLE SURPRISE",title:f.q,help:"這題沒有標準答案，就憑直覺選吧。",options:f.answers.map((x,i)=>({...x,value:i}))};
+}
+function renderQuestion(){
+ const q=currentQuestion();$("stepLabel").textContent=`第 ${state.step+1} 題／共 3 題`;$("stepType").textContent=q.type;$("progressBar").style.width=((state.step+1)/3*100)+"%";$("questionLabel").textContent=q.label;$("questionTitle").textContent=q.title;$("questionHelp").textContent=q.help;
+ const opts=$("options");opts.innerHTML="";
+ q.options.forEach((o,i)=>{const b=document.createElement("button");b.className="option"+(state.answers[state.step]===o.value?" selected":"");b.type="button";b.innerHTML=`<span class="emoji">${o.emoji||"✦"}</span><span><strong>${escapeHtml(o.label)}</strong><small>${escapeHtml(o.desc||o.tags?.slice(0,2).join("・")||"跟著直覺選擇")}</small></span>`;b.addEventListener("click",()=>{state.answers[state.step]=o.value;renderQuestion();});opts.appendChild(b);});
+ $("backBtn").style.visibility=state.step===0?"hidden":"visible";$("nextBtn").disabled=state.answers[state.step]===null;$("nextBtn").textContent=state.step===2?"拆開命運信封 ✉":"下一題 →";
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function getSelectedTags(){
+ const mood=moods[state.answers[0]];const fun=funQuestions[state.funIndex].answers[state.answers[2]];
+ return {mood,lang:languages[state.answers[1]],fun,funQuestion:funQuestions[state.funIndex]};
+}
+function chooseSong(){
+ const a=getSelectedTags();const langSongs=songs.filter(s=>s.lang===a.lang.label);
+ if(!langSongs.length)return null;
+ const scored=langSongs.map(song=>{
+  const moodHits=song.moods.filter(t=>a.mood.tags.includes(t)).length;
+  const funHits=song.tags.concat(song.moods,song.genres).filter(t=>a.fun.tags.includes(t)).length;
+  return {song,score:1+moodHits*2+funHits*.8+Math.random()*.9};
+ });
+ // 加權隨機：語言是硬性條件，心情權重高於趣味答案。
+ const pool=scored.filter(x=>x.score>=2.3);const candidates=pool.length?pool:scored;
+ const total=candidates.reduce((n,x)=>n+x.score,0);let r=Math.random()*total;
+ for(const item of candidates){r-=item.score;if(r<=0)return item.song;}
+ return candidates[candidates.length-1].song;
+}
+function recommendationReason(song){
+ const a=getSelectedTags();const moodLabel=a.mood.label;const funLabel=a.fun.label;
+ const moodPhrase={
+ "晴朗放晴":"想讓心情再亮一點","陰天漫遊":"想把步調放慢一點","下雨了":"想好好接住此刻的感受","雷雨交加":"需要一點能量釋放情緒","雨後彩虹":"正在替新的可能留一點位置","深夜星空":"想安靜地和自己待一會兒"
+ }[moodLabel];
+ const shared=song.moods.filter(t=>a.mood.tags.includes(t));
+ const funShared=song.tags.concat(song.moods,song.genres).filter(t=>a.fun.tags.includes(t));
+ let line=`你選了「${moodLabel}」，也想聽${a.lang.label}歌曲。`;
+ if(shared.length)line+=` 這首歌帶有${shared.slice(0,2).join("、")}的情緒線索，和你今天${moodPhrase}的心情很合拍。`;
+ else line+=` 它的音樂氣質也許能陪你換個角度感受今天。`;
+ if(funShared.length)line+=` 趣味題裡的「${funLabel}」也呼應了${funShared[0]}的感覺。`;
+ else line+=` 而「${funLabel}」是今天的小小線索，讓這次相遇多了一點隨機驚喜。`;
+ return line;
+}
+function renderResult(song){
+ state.currentSong=song;
+ $("songTitle").textContent=song.title;$("songArtist").textContent=song.artist;
+ $("songTags").innerHTML=[song.lang,...song.genres.slice(0,1),...song.tags.slice(0,2)].map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join("");
+ $("reasonText").textContent=recommendationReason(song);
+ $("artEmoji").textContent=song.emoji;$("artTitle").textContent=song.title.toUpperCase();
+ $("albumArt").style.background=`linear-gradient(140deg,${song.colors[0]},${song.colors[1]} 58%,#fff0cb)`;
+ $("albumArt").setAttribute("aria-label",song.title+"—"+song.artist+" 的裝飾性專輯封面");
+ $("playBtn").textContent="▶ PLAY／前往聆聽";
+ $("playBtn").onclick=()=>openYouTube(song);
+ $("artistBtn").onclick=showArtist;
+ $("shareBtn").onclick=shareSong;
+ $("rerollBtn").onclick=startQuiz;
+ $("searchSongBtn").onclick=()=>openYouTubeSearch(song.title+" "+song.artist);
+ $("searchArtistBtn").onclick=()=>openYouTubeSearch(song.artist);
+ $("modalSearchArtist").onclick=()=>openYouTubeSearch(song.artist);
+ showScreen("result");
+}
+function openYouTube(song){const url="https://www.youtube.com/results?search_query="+encodeURIComponent(song.title+" "+song.artist+" official audio");window.open(url,"_blank","noopener,noreferrer");}
+function openYouTubeSearch(query){window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(query)," _blank".trim(),"noopener,noreferrer");}
+function showArtist(){
+ const s=state.currentSong;if(!s)return;
+ $("modalTitle").textContent=s.artist;$("artistBio").textContent=s.bio||"目前沒有完整的內建介紹，可以透過搜尋連結認識這位歌手。";$("artistWorks").textContent=s.works||"可在 YouTube 搜尋更多作品。";
+ $("artistModal").classList.add("show");
+}
+function closeArtist(){$("artistModal").classList.remove("show");}
+async function shareSong(){
+ const s=state.currentSong;if(!s)return;
+ const a=getSelectedTags();
+ const text=`💌 我的今日命定曲\n🎵 ${s.title} — ${s.artist}\n🌷 今日心情：${a.mood.label}\n🎧 語言：${s.lang}\n▶ 聆聽／搜尋：https://www.youtube.com/results?search_query=${encodeURIComponent(s.title+" "+s.artist)}\n抽一首屬於你的歌：今日音樂占卜 ♡`;
+ try{
+  if(navigator.share){await navigator.share({title:"我的今日命定曲",text});}
+  else if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);toast("分享文字已複製，快傳給朋友吧 ♡");}
+  else{showShareFallback(text);}
+ }catch(e){if(e&&e.name!=="AbortError")showShareFallback(text);}
+}
+function showShareFallback(text){
+ const modal=$("artistModal");$("modalTitle").textContent="分享今日歌曲";$("artistBio").textContent="你的分享文字已準備好，請複製下方內容：";$("artistWorks").textContent=text;$("modalSearchArtist").classList.add("hidden");modal.classList.add("show");
+ $("closeModal").onclick=()=>{closeArtist();$("modalSearchArtist").classList.remove("hidden");$("closeModal").onclick=closeArtist;};
+}
+function beginReveal(){
+ const song=chooseSong();if(!song){toast("這個語言目前沒有可用歌曲，請重新占卜。");showScreen("quiz");return;}
+ state.currentSong=song;$("envelope").classList.remove("open");$("revealTitle").textContent="你的命定曲，正在送達";$("revealMessage").textContent="正在為你尋找今天的那首歌……";showScreen("reveal");
+ setTimeout(()=>$("envelope").classList.add("open"),300);
+ setTimeout(()=>{$("revealTitle").textContent="叮咚！你的音樂小禮物到了";$("revealMessage").textContent="信封裡藏著一首，只屬於今天的歌。";},950);
+ setTimeout(()=>renderResult(song),1900);
+}
+$("startBtn").addEventListener("click",startQuiz);
+$("backBtn").addEventListener("click",()=>{if(state.step>0){state.step--;renderQuestion();}});
+$("nextBtn").addEventListener("click",()=>{if(state.answers[state.step]===null)return;if(state.step<2){state.step++;renderQuestion();}else beginReveal();});
+$("closeModal").addEventListener("click",closeArtist);
+$("artistModal").addEventListener("click",e=>{if(e.target===$("artistModal"))closeArtist();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeArtist();});
+</script>
+</body>
+</html>
